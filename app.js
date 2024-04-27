@@ -31,11 +31,13 @@ async function run() {
 
         const touristSpotsDB = client.db("touristSpotsDB");
         const touristSpotsCollection = touristSpotsDB.collection("touristSpotsCollection");
+        const usersCollection = touristSpotsDB.collection("usersCollection");
 
         app.get('/tourists', async(req, res) => {
             const cursor = touristSpotsCollection.find();
             const result = await cursor.toArray();
             res.send(result)
+            console.log(result)
         })
 
         app.get('/tourists/:id', async(req, res) => {
@@ -48,6 +50,16 @@ async function run() {
         app.post('/tourists', async (req, res) => {
             const newTouristSpot = req.body;
             const result = await touristSpotsCollection.insertOne(newTouristSpot)
+            res.send(result)
+        })
+
+
+
+
+        app.post('/users', async(req, res) => {
+            const user = req.body;
+            console.log(user)
+            const result = await usersCollection.insertOne(user);
             res.send(result)
         })
 
