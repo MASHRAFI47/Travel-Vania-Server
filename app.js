@@ -137,7 +137,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send("hello world")
+    res.send("travel mania server is running")
 })
 
 module.exports = app;
