@@ -32,17 +32,17 @@ async function run() {
         const touristSpotsDB = client.db("touristSpotsDB");
         const touristSpotsCollection = touristSpotsDB.collection("touristSpotsCollection");
         const usersCollection = touristSpotsDB.collection("usersCollection");
+        const countriesCollection = touristSpotsDB.collection("countriesCollection");
 
-        app.get('/tourists', async(req, res) => {
+        app.get('/tourists', async (req, res) => {
             const cursor = touristSpotsCollection.find();
             const result = await cursor.toArray();
             res.send(result)
-            console.log(result)
         })
 
-        app.get('/tourists/:id', async(req, res) => {
+        app.get('/tourists/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await touristSpotsCollection.findOne(query);
             res.send(result)
         })
@@ -53,15 +53,77 @@ async function run() {
             res.send(result)
         })
 
+        app.put('/tourists/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const options = { upsert: true }
+            const tourist = req.body;
+            const updateTourist = {
+                $set: {
+                    imageURL: tourist.imageURL,
+                    tourists_spot_name: tourist.tourists_spot_name,
+                    country_Name: tourist.country_Name,
+                    location: tourist.location,
+                    short_description: tourist.short_description,
+                    average_cost: tourist.average_cost,
+                    seasonality: tourist.seasonality,
+                    travel_time: tourist.travel_time,
+                    totalVisitorsPerYear: tourist.totalVisitorsPerYear
+                }
+            }
+            const result = await touristSpotsCollection.updateOne(query, updateTourist, options)
+            res.send(result)
+        })
+
+        app.delete('/tourists/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await touristSpotsCollection.deleteOne(query);
+            res.send(result)
+        })
+
+
+        // app.get('/tourists/sorting', async (req, res) => {
+        //     const cursor = touristSpotsCollection.find().sort({average_cost:-1});
+        //     const result = await cursor.toArray();
+        //     res.send(result)
+        // })
 
 
 
-        app.post('/users', async(req, res) => {
+        app.post('/users', async (req, res) => {
             const user = req.body;
-            console.log(user)
             const result = await usersCollection.insertOne(user);
             res.send(result)
         })
+
+
+
+
+        //get individual data for individual users
+        app.get('/myProduct/:email', async (req, res) => {
+            const result = await touristSpotsCollection.find({ email: req.params.email }).toArray();
+            res.send(result);
+        })
+
+        
+
+        //countries
+
+        app.get('/countries', async(req, res) => {
+            const cursor = countriesCollection.find()
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.post('/countries', async(req, res) => {
+            const country = req.body;
+            const result = await countriesCollection.insertOne(country);
+            res.send(result)
+        })
+
+
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
