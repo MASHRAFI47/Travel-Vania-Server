@@ -116,11 +116,11 @@ async function run() {
             res.send(result)
         })
 
-        app.post('/countries', async(req, res) => {
-            const country = req.body;
-            const result = await countriesCollection.insertOne(country);
-            res.send(result)
-        })
+        // app.post('/countries', async(req, res) => {
+        //     const country = req.body;
+        //     const result = await countriesCollection.insertOne(country);
+        //     res.send(result)
+        // })
 
 
 
